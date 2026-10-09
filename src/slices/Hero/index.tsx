@@ -39,28 +39,31 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
       introTl
         .set(".hero", { opacity: 1 })
         .from(".hero-header-word", {
-          scale: 3,
+          scale: 2,
           opacity: 0,
-          ease: "power4.in",
-          delay: 0.3,
-          stagger: 1,
+          ease: "power3.out",
+          delay: 0.05,
+          stagger: 0.15,
+          duration: 0.4,
         })
         .from(
           ".hero-subheading",
           {
             opacity: 0,
-            y: 30,
+            y: 15,
+            duration: 0.3,
           },
-          "+=.8",
+          "-=0.2",
         )
         .from(".hero-body", {
           opacity: 0,
           y: 10,
+          duration: 0.3,
         })
         .from(".hero-button", {
           opacity: 0,
           y: 10,
-          duration: 0.6,
+          duration: 0.3,
         });
 
       const scrollTl = gsap.timeline({
@@ -105,7 +108,7 @@ const Hero = ({ slice }: HeroProps): JSX.Element => {
     <Bounded
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
-      className="hero opacity-0"
+      className="hero"
     >
       {isDesktop && (
         <View className="hero-scene pointer-events-none sticky top-0 z-50 -mt-[100vh] hidden h-screen w-screen md:block">

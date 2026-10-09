@@ -58,8 +58,8 @@ export default function Scene({}: Props) {
 
     const introTl = gsap.timeline({
       defaults: {
-        duration: 3,
-        ease: "back.out(1.4)",
+        duration: 1.2,
+        ease: "power2.out",
       },
     });
 
