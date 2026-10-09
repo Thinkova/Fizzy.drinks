@@ -13,6 +13,8 @@ const flavorTextures = {
   watermelon: "/labels/watermelon.png",
 };
 
+useTexture.preload(Object.values(flavorTextures));
+
 const metalMaterial = new THREE.MeshStandardMaterial({
   roughness: 0.3,
   metalness: 1,

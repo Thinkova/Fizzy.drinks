@@ -23,13 +23,14 @@ export function Bubbles({
   const minSpeed = speed * 0.001;
   const maxSpeed = speed * 0.005;
 
-  // Create geometry and material for our mesh
-  const geometry = new THREE.SphereGeometry(bubbleSize, 16, 16);
-
-  const material = new THREE.MeshStandardMaterial({
-    transparent: true,
-    opacity,
-  });
+  // Reuse geometry and material to avoid allocating objects on every render
+  const geometry = useRef(new THREE.SphereGeometry(bubbleSize, 12, 12)).current;
+  const material = useRef(
+    new THREE.MeshStandardMaterial({
+      transparent: true,
+      opacity,
+    }),
+  ).current;
 
   // Runs once to create and place our bubbles
   useEffect(() => {
@@ -63,14 +64,20 @@ export function Bubbles({
     };
   }, [count, minSpeed, maxSpeed]);
 
+  const currentColor = useRef("");
+
   // useFrame runs on every animation frame
   useFrame(() => {
     if (!meshRef.current) {
       return;
     }
 
-    // Assign current body color to bubble so it looks natural
-    material.color = new THREE.Color(document.body.style.backgroundColor);
+    // Assign current body color to bubble only if changed
+    const bodyBg = document.body.style.backgroundColor;
+    if (bodyBg && bodyBg !== currentColor.current) {
+      currentColor.current = bodyBg;
+      material.color.setStyle(bodyBg);
+    }
 
     for (let i = 0; i < count; i++) {
       meshRef.current.getMatrixAt(i, o.matrix);

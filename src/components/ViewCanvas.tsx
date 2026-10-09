@@ -27,7 +27,7 @@ export default function ViewCanvas({}: Props) {
         }}
         shadows
         dpr={[1, 1.5]}
-        gl={{ antialias: true }}
+        gl={{ antialias: true, powerPreference: "high-performance" }}
         camera={{
           fov: 30,
         }}
