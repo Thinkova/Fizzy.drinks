@@ -1,7 +1,7 @@
 "use client";
 
 import * as THREE from "three";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import gsap from "gsap";
 
@@ -23,14 +23,19 @@ export function Bubbles({
   const minSpeed = speed * 0.001;
   const maxSpeed = speed * 0.005;
 
-  // Reuse geometry and material to avoid allocating objects on every render
-  const geometry = useRef(new THREE.SphereGeometry(bubbleSize, 12, 12)).current;
-  const material = useRef(
-    new THREE.MeshStandardMaterial({
-      transparent: true,
-      opacity,
-    }),
-  ).current;
+  // Memoize geometry and material to prevent memory leaks and unnecessary allocations
+  const geometry = useMemo(
+    () => new THREE.SphereGeometry(bubbleSize, 12, 12),
+    [bubbleSize],
+  );
+  const material = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        transparent: true,
+        opacity,
+      }),
+    [opacity],
+  );
 
   // Runs once to create and place our bubbles
   useEffect(() => {
@@ -59,10 +64,10 @@ export function Bubbles({
 
     mesh.instanceMatrix.needsUpdate = true;
     return () => {
-      mesh.geometry.dispose();
-      (mesh.material as THREE.Material).dispose();
+      geometry.dispose();
+      material.dispose();
     };
-  }, [count, minSpeed, maxSpeed]);
+  }, [count, minSpeed, maxSpeed, geometry, material]);
 
   const currentColor = useRef("");
 
@@ -72,11 +77,17 @@ export function Bubbles({
       return;
     }
 
-    // Assign current body color to bubble only if changed
-    const bodyBg = document.body.style.backgroundColor;
-    if (bodyBg && bodyBg !== currentColor.current) {
-      currentColor.current = bodyBg;
-      material.color.setStyle(bodyBg);
+    // Assign current body color to bubble safely
+    if (typeof document !== "undefined") {
+      const bodyBg = document.body?.style?.backgroundColor;
+      if (bodyBg && bodyBg !== currentColor.current) {
+        currentColor.current = bodyBg;
+        try {
+          material.color.setStyle(bodyBg);
+        } catch {
+          // ignore invalid color format
+        }
+      }
     }
 
     for (let i = 0; i < count; i++) {
