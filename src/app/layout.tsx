@@ -13,6 +13,10 @@ const ViewCanvas = dynamic(() => import("@/components/ViewCanvas"), {
   ssr: false,
 });
 
+const LoadingScreen = dynamic(() => import("@/components/LoadingScreen"), {
+  ssr: false,
+});
+
 const alpino = localFont({
   src: "../../public/fonts/Alpino-Variable.woff2",
   display: "swap",
@@ -29,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={alpino.variable}>
       <body className="overflow-x-hidden bg-yellow-300">
         <Header />
+        <LoadingScreen />
         <main>
           {children}
           <ViewCanvas />
